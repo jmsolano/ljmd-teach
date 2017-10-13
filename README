@@ -1,0 +1,18 @@
+This small MD program has implemented a Lennard-Jones potential.
+
+To compile the code use the following command:
+
+gfortran -O2 -o ljmd.x ljmd.F95 --pedantic
+
+This will create the binary ljmd.x, which can be run as follows:
+
+./ljmd.x argon_108.inp
+
+This will override the file argon_108.rest, and create a file called argon_108.xyz.
+
+The file argon_108.xyz can be opened and viewed with VMD.
+
+In the current version, please erase the xyz file between consecutive ljmd.x executions.
+
+
+
