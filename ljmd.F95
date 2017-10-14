@@ -4,6 +4,7 @@
 #include "vanderwaalsforce.F95"
 #include "utils.F95"
 #include "boundaryconditions.F95"
+#include "berendsen.F95"
 PROGRAM LJMD
     use kinds
     use MDSystem
@@ -11,6 +12,7 @@ PROGRAM LJMD
     use IntegratorVerlet
     use VanderWaalsForce
     use BoundaryConditions
+    use BerendsenThermostat
     IMPLICIT NONE
     CHARACTER(len=sln) :: inputFileName
     INTEGER            :: i
@@ -25,19 +27,20 @@ PROGRAM LJMD
     CALL InitIntegratorVerlet
     CALL InitVanderWaalsForce
     CALL AddFirstXYZData(trjfile,trjunit,natoms,x,0)
-    WRITE(stdout, *) 'Starting simulation with ', natoms, ' atoms for', nsteps, ' steps'
-    WRITE(stdout, *) '    NFI           TEMP                 EKIN                  EPOT&
+    WRITE(stdout, *) '#Starting simulation with ', natoms, ' atoms for', nsteps, ' steps'
+    WRITE(stdout, *) '#   NFI           TEMP                 EKIN                  EPOT&
         &                ETOT'
     DO nfi=1,nsteps
         IF (MOD(nfi,nprint) == 0 ) THEN
-            CALL AppendXYZData(trjfile,trjunit,natoms,x,nfi)
             CALL GetEkin(natoms,mass,temp,ekin,v)
+            CALL AppendXYZData(trjfile,trjunit,natoms,x,nfi)
             WRITE(stdout, '(I8,1X,F20.8,1X,F20.8,1X,F20.8,1X,F20.8)') &
                 nfi, temp, ekin, epot, ekin+epot
         END IF
         CALL AddVanderWaalsForces
         CALL AdvanceStepVerlet
         CALL ApplyBoundaryConditions
+        !CALL ApplyBerendsenThermostat
     END DO
     CALL SaveToRestFile(rstfile,rstunit,natoms,x)
     CALL CleanMDSys

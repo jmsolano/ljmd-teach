@@ -17,27 +17,29 @@ CONTAINS
         IMPLICIT NONE
         REAL(kind=dbl) :: rsq, rcutsq, rinv, delta(3)
         REAL(kind=dbl) :: r6, ffac
-        INTEGER :: i, j
-
+        INTEGER :: i, j, k
         epot=0.0_dbl
         f=0.0_dbl
         rcutsq=rcut*rcut
-        DO i=1,natoms
+        DO i=1,natoms-1
             DO j=i+1,natoms
                 delta=x(i,:)-x(j,:)
+                DO k=1,3 !PBC
+                    IF (abs(delta(k)) > (0.5_dbl*boxlength)) THEN !PBC
+                        delta(k)=delta(k)-sign(boxlength,delta(k)) !PBC
+                    END IF
+                END DO !PBC
                 rsq = dot_product(delta,delta)
                 IF (rsq < rcutsq) THEN
                     rinv = 1.0_dbl/rsq
                     r6 = rinv*rinv*rinv
                     ffac = (12.0_dbl*c12*r6 - 6.0_dbl*c6)*r6*rinv
                     epot = epot + r6*(c12*r6 - c6)
-
                     f(i,:) = f(i,:) + delta*ffac
                     f(j,:) = f(j,:) - delta*ffac
                 END IF
             END DO
         END DO
-
     END SUBROUTINE AddVanderWaalsForces
 END MODULE VanderWaalsForce
 #endif
