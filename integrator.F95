@@ -42,7 +42,8 @@ CONTAINS
         DO i=1,natoms
                 xtmp=x(i,:)
                 x(i,:)=(2.0_dbl*x(i,:))-xp(i,:)+(h2*vfac*f(i,:))
-                v(i,:)=oneOver2h*(x(i,:)-xp(i,:))
+                !v(i,:)=oneOver2h*(x(i,:)-xp(i,:))
+                v(i,:)=v(i,:) + vfac*f(i,:)*h
                 xp(i,:)=xtmp
         END DO
     END SUBROUTINE AdvanceStepVerlet

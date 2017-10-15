@@ -40,7 +40,7 @@ PROGRAM LJMD
         CALL AddVanderWaalsForces
         CALL AdvanceStepVerlet
         CALL ApplyBoundaryConditions
-        !CALL ApplyBerendsenThermostat
+        CALL ApplyBerendsenThermostat
     END DO
     CALL SaveToRestFile(rstfile,rstunit,natoms,x)
     CALL CleanMDSys
